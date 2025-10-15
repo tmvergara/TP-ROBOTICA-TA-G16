@@ -3,8 +3,8 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
 
-#include <config.h>
-#include <types.h>
+#include "config.h"
+#include "types.h"
 
 extern Servo servoElevador;
 extern Servo servoIzquierdo;

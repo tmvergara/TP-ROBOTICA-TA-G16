@@ -1,5 +1,5 @@
 
-#include <../lib/utilidades.h>
+#include <utilidades.h>
 
 struct Arco
 {

@@ -1,4 +1,4 @@
-#include <../lib/gcode.h>
+#include <gcode.h>
 
 String gCode = "";
 
