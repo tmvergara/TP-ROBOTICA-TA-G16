@@ -268,7 +268,8 @@ M5"></textarea>
       const gcodeMap = {
         // Triángulo: (-30,45) -> (30,45) -> (0,110)
         triangle:
-          `G28
+          `M5
+          G28
           M203 X100
           M5
           G1 X-30 Y45
@@ -280,7 +281,8 @@ M5"></textarea>
 
         // Rombo: top (0,110), right (35,75), bottom (0,40), left (-35,75)
         diamond:
-          `G28
+          `M5
+          G28
           M203 X100
           M5
           G1 X0 Y110
@@ -293,7 +295,8 @@ M5"></textarea>
 
         // Círculo: radio 25, centro (0,75). Dos semicírculos CCW con centro absoluto I=0,J=75
         circle:
-          `G28
+          `M5
+          G28
           M203 X100
           M5
           G1 X25 Y75
@@ -304,7 +307,8 @@ M5"></textarea>
 
         // Cuadrado: lado 60 => x=-30..30, y=45..105
         square:
-          `G28
+          `M5
+          G28
           M203 X100
           M5
           G1 X-30 Y45
@@ -318,7 +322,8 @@ M5"></textarea>
         // Corazón simple:
         // Dos semicírculos (centros en (-10,80) y (10,80), r=10) + líneas a la punta (0,55)
         heart:
-          `G28
+          `M5
+          G28
           M203 X100
           M5
           G1 X0 Y80
@@ -331,7 +336,8 @@ M5"></textarea>
 
         // Estrella 5 puntas (poligonal) dentro de X ±40, Y 45..110
         star:
-          `G28
+          `M5
+          G28
           M203 X100
           M5
           G1 X0 Y110
