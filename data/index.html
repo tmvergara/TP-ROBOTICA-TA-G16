@@ -1,1 +1,237 @@
-<!-- Aca va el HTML del sitio con sus metodos. -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TP Robotica</title>
+<style>
+  :root { --gap:24px; --radius:14px; --shadow:0 8px 18px rgba(0,0,0,.18); }
+  *{box-sizing:border-box}
+  body{ margin:0; font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif; background:#0f1115; color:#e9edf1 }
+  header{ margin-bottom: 30px ;padding:12px 16px; border-bottom:1px solid #1b2230; position:sticky; top:0; background:#0f1115; z-index:1 }
+  header h1{ margin:0; font-size:18px }
+  #status{ float:right; font-size:12px; padding:.25rem .6rem; border-radius:999px; background:#18202e; color:#b9c5d3; border:1px solid #263249 }
+  main{ max-width:960px; margin:0 auto; padding:16px }
+  .grid{ display:grid; grid-template-columns:repeat(3,minmax(140px,1fr)); gap:var(--gap) }
+  .card{ height:200px; border-radius:var(--radius); display:grid; place-items:center; cursor:pointer; box-shadow:var(--shadow); border:3px solid transparent; transition:transform .06s ease }
+  .card:active{ transform:scale(.98) }
+  .red{background:#e53935} .blue{background:#1e88e5} .yellow{background:#f2a900} .green{background:#2e7d32}
+  .pink{background:#e91e63} .purple{background:#8e24aa}
+  svg{ width:80px; height:80px; fill:#fff }
+  .toolbar{ margin-top:var(--gap); display:flex; gap:10px; flex-wrap:wrap }
+  .btn{ background:#243147; border:1px solid #334765; color:#dbe7ff; padding:10px 14px; border-radius:12px; font-weight:600; cursor:pointer }
+  .btn:hover{ filter:brightness(1.1) }
+  .btn.debug{ width:100%; justify-content:center; display:flex; background:#3a2a00; border-color:#705000 }
+  .debug-panel{ margin-top:var(--gap); border:1px solid #25324a; border-radius:14px; background:#0b0f17; padding:12px; display:none; }
+  .debug-row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
+  textarea{ width:100%; min-height:160px; border-radius:10px; border:1px solid #334765; background:#0f1320; color:#e9f1ff; padding:10px; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace }
+  .hint{ font-size:12px; color:#9fb0c6 }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Plotter 2D – Tp Robotica - Tecnologias para la Automatizacion - G16</h1>
+    <span id="status" aria-live="polite">Listo</span>
+  </header>
+
+  <main>
+    <section class="grid" aria-label="Figuras">
+      <button class="card red"    data-shape="triangle" aria-label="Triángulo">
+        <svg viewBox="0 0 100 100"><polygon points="50,10 90,90 10,90"/></svg>
+      </button>
+      <button class="card blue"   data-shape="diamond"  aria-label="Rombo">
+        <svg viewBox="0 0 100 100"><polygon points="50,10 90,50 50,90 10,50"/></svg>
+      </button>
+      <button class="card yellow" data-shape="circle"   aria-label="Círculo">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="30"/></svg>
+      </button>
+      <button class="card green"  data-shape="square"   aria-label="Cuadrado">
+        <svg viewBox="0 0 100 100"><rect x="25" y="25" width="50" height="50"/></svg>
+      </button>
+      <button class="card pink" data-shape="heart" aria-label="Corazón">
+        <svg viewBox="0 0 100 100"><path d="M50 90 L15 55 A20 20 0 0 1 50 25 A20 20 0 0 1 85 55 Z"/></svg>
+      </button>
+      <button class="card purple" data-shape="star" aria-label="Estrella">
+        <svg viewBox="0 0 100 100"><polygon points="50,10 61,40 94,40 67,60 76,90 50,72 24,90 33,60 6,40 39,40"/></svg>
+      </button>
+    </section>
+
+    <div class="toolbar">
+      <button id="btnDebugToggle" class="btn debug">🐞 debug</button>
+    </div>
+
+    <!-- Panel debug oculto por defecto -->
+    <section id="dbgPanel" class="debug-panel">
+      <div class="debug-row">
+        <button id="btnAsembly" class="btn">▶ asmbly</button>
+        <span class="hint">Envía un POST a <code>/asembly</code> (placeholder).</span>
+      </div>
+
+      <div>
+        <label for="gcodeBox" class="hint">G-code manual (se enviará como <code>text/plain</code> a <code>/gcode</code>)</label>
+        <textarea id="gcodeBox" placeholder="Ejemplo:
+G28
+M203 X100
+M3
+G1 X-30 Y45
+G1 X30 Y45
+G1 X0 Y110
+G1 X-30 Y45
+M5"></textarea>
+        <div class="debug-row">
+          <button id="btnSendGcode" class="btn">✉ Enviar G-code</button>
+          <span class="hint">Editá el endpoint en el JS si querés otro.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+(function(){
+  const statusEl = document.getElementById('status');
+  const dbgPanel = document.getElementById('dbgPanel');
+  const btnToggle = document.getElementById('btnDebugToggle');
+  const btnAsm = document.getElementById('btnAsembly');
+  const btnSend = document.getElementById('btnSendGcode');
+  const gbox = document.getElementById('gcodeBox');
+
+  const setStatus = (mode, msg) => {
+    if(mode==='ok'){ statusEl.style.background='#12301e'; statusEl.style.color='#b9f6ca'; }
+    else if(mode==='err'){ statusEl.style.background='#3a1114'; statusEl.style.color='#ffcdd2'; }
+    else { statusEl.style.background='#18202e'; statusEl.style.color='#b9c5d3'; }
+    statusEl.textContent = msg;
+  };
+
+  async function postPlain(url, body){
+    const r = await fetch(url, { method:'POST', headers:{'Content-Type':'text/plain'}, body });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return await r.text().catch(()=> '');
+  }
+
+  // =======================
+  // G-code seguro (bounds)
+  // Centro común (0,75)
+  // =======================
+  const gcodeMap = {
+    // Triángulo: vértices (-30,45), (30,45), (0,110)
+    triangle:
+`G28
+M203 X100
+M3
+G1 X-30 Y45
+G1 X30 Y45
+G1 X0 Y110
+G1 X-30 Y45
+M5`,
+
+    // Rombo: top (0,110), right (35,75), bottom (0,40), left (-35,75)
+    diamond:
+`G28
+M203 X100
+M3
+G1 X0 Y110
+G1 X35 Y75
+G1 X0 Y40
+G1 X-35 Y75
+G1 X0 Y110
+M5`,
+
+    // Círculo: radio 25, centro (0,75). Dos semicircunferencias G2 (horario).
+    // Arranca en (25,75) -> (-25,75) con I=-25 J=0, luego vuelve con I=25 J=0.
+    circle:
+`G28
+M203 X100
+M3
+G1 X25 Y75
+G2 X-25 Y75 I-25 J0
+G2 X25 Y75 I25 J0
+M5`,
+
+    // Cuadrado: lado 60 => x=-30..30, y=45..105
+    square:
+`G28
+M203 X100
+M3
+G1 X-30 Y45
+G1 X30 Y45
+G1 X30 Y105
+G1 X-30 Y105
+G1 X-30 Y45
+M5`,
+
+    // Corazón aproximado, simétrico y dentro de bounds
+    // Trayecto con arcos en los "lóbulos" y punta en (0,45)
+    heart:
+`G28
+M203 X100
+M3
+G1 X0 Y95
+G3 X-20 Y85 I-10 J0
+G3 X-30 Y75 I-10 J-10
+G1 X0 Y45
+G1 X30 Y75
+G3 X20 Y85 I-10 J10
+G3 X0 Y95 I-20 J10
+M5`,
+
+    // Estrella 5 puntas (poligonal), dentro de X ±40, Y 45..110
+    star:
+`G28
+M203 X100
+M3
+G1 X0 Y110
+G1 X9 Y85
+G1 X38 Y85
+G1 X15 Y70
+G1 X24 Y45
+G1 X0 Y60
+G1 X-24 Y45
+G1 X-15 Y70
+G1 X-38 Y85
+G1 X-9 Y85
+G1 X0 Y110
+M5`
+  };
+
+  // Click en figuras -> POST /gcode
+  document.querySelectorAll('.card').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const shape = btn.dataset.shape;
+      setStatus('info', `Enviando ${shape}…`);
+      try{
+        await postPlain('/gcode', gcodeMap[shape]);
+        setStatus('ok', `Figura "${shape}" enviada`);
+      }catch(e){
+        console.error(e); setStatus('err','Error enviando figura');
+      }
+    });
+  });
+
+  // Mostrar/ocultar panel debug
+  btnToggle.addEventListener('click', ()=>{
+    dbgPanel.style.display = (dbgPanel.style.display === 'none' || !dbgPanel.style.display) ? 'block' : 'none';
+  });
+
+  // Botón "asembly" -> POST /asembly (placeholder)
+  btnAsm.addEventListener('click', async ()=>{
+    setStatus('info', 'Ejecutando asmbly…');
+    try{
+      await postPlain('/asembly', 'RUN'); // Cambiá endpoint/cuerpo si hace falta
+      setStatus('ok','asembly enviado');
+    }catch(e){ console.error(e); setStatus('err','Error en asmbly'); }
+  });
+
+  // Enviar G-code manual
+  btnSend.addEventListener('click', async ()=>{
+    const body = gbox.value.trim();
+    if(!body){ setStatus('err','G-code vacío'); return; }
+    setStatus('info','Enviando G-code manual…');
+    try{
+      await postPlain('/gcode', body);
+      setStatus('ok','G-code manual enviado');
+    }catch(e){ console.error(e); setStatus('err','Error enviando G-code'); }
+  });
+})();
+</script>
+</body>
+</html>
