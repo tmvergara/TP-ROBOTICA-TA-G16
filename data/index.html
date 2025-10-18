@@ -306,13 +306,11 @@ M5"></textarea>
 
         // Círculo: centro (0,75), radio 25
         // Desde (25,75): offset relativo I=-25, J=0 para llegar a centro (0,75)
-        circle: `M5
-        G28
+        circle: `G28
         M203 X100
         G1 X25 Y75
         M3
-        G3 X-25 Y75 I-25 J0
-        G3 X25 Y75 I25 J0
+        G3 I-25 J0  
         M5`,
 
         // Cuadrado: lado 60 => x=-30..30, y=45..105
