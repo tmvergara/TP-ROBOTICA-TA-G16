@@ -297,12 +297,13 @@ M5"></textarea>
         circle:
           `M5
           G28
+         G90
           M203 X100
           M5
           G1 X25 Y75
           M3
-          G3 X-25 Y75 I0 J75
-          G3 X25 Y75 I0 J75
+          G3 X-25 Y75 I-25 J0
+          G3 X25 Y75 I25 J0
           M5`,
 
         // Cuadrado: lado 60 => x=-30..30, y=45..105
@@ -324,14 +325,15 @@ M5"></textarea>
         heart:
           `M5
           G28
+         G90
           M203 X100
           M5
           G1 X0 Y80
           M3
-          G3 X-20 Y80 I-10 J80
+          G3 X-20 Y80 I-10 J0
           G1 X0 Y55
           G1 X20 Y80
-          G2 X0 Y80 I10 J80
+          G2 X0 Y80 I-10 J0
           M5`,
 
         // Estrella 5 puntas (poligonal) dentro de X ±40, Y 45..110
