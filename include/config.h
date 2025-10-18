@@ -22,9 +22,9 @@ const float X_MAX = 50;  // Posición X máxima
 const Posicion POSICION_INICIO = {x : 0, y : Y_MIN}; // Posición de inicio
 
 // Velocidad
-const float VELOCIDAD_MIN = 10;      // Velocidad mínima mm/s
-const float VELOCIDAD_MAX = 300;     // Velocidad máxima mm/s
-const float VELOCIDAD_DEFECTO = 100; // Velocidad del lápiz mm/s
+const float VELOCIDAD_MIN = 10;     // Velocidad mínima mm/s
+const float VELOCIDAD_MAX = 150;    // Velocidad máxima mm/s
+const float VELOCIDAD_DEFECTO = 50; // Velocidad del lápiz mm/s
 
 // Tolerancia para comparar posiciones
 const float DELTA_MAX = 0.1;

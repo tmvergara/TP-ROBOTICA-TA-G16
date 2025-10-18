@@ -219,9 +219,9 @@
       <!-- Panel debug oculto por defecto -->
       <section id="dbgPanel" class="debug-panel">
         <div class="debug-row">
-          <button id="btnAsembly" class="btn">▶ asmbly</button>
+          <button id="btnAssembly" class="btn">▶ asmbly</button>
           <span class="hint"
-            >Envía un POST a <code>/asembly</code> (placeholder).</span
+            >Envía un POST a <code>/assembly</code> (placeholder).</span
           >
         </div>
 
@@ -255,7 +255,7 @@ M5"
         const statusEl = document.getElementById("status");
         const dbgPanel = document.getElementById("dbgPanel");
         const btnToggle = document.getElementById("btnDebugToggle");
-        const btnAsm = document.getElementById("btnAsembly");
+        const btnAsm = document.getElementById("btnAssembly");
         const btnSend = document.getElementById("btnSendGcode");
         const gbox = document.getElementById("gcodeBox");
 
@@ -396,7 +396,7 @@ M5"
               : "none";
         });
 
-        // Botón "asembly" -> POST /asembly (placeholder)
+        // Botón "assembly" -> POST /assembly (placeholder)
         btnAsm.addEventListener("click", async () => {
           setStatus("info", "Ejecutando assembly…");
           try {
@@ -404,7 +404,7 @@ M5"
             setStatus("ok", "assembly enviado");
           } catch (e) {
             console.error(e);
-            setStatus("err", "Error en asmbly");
+            setStatus("err", "Error en assembly");
           }
         });
 

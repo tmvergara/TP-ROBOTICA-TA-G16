@@ -41,9 +41,12 @@ void executeLine(GCodeLine &gline)
     }
     else if (gline.cmd == "G2" || gline.cmd == "G3")
     {
+        // I,J son RELATIVOS a la posición actual
+        Posicion posActual = obtenerPosicionActual();
+
         Posicion center;
-        center.x = gline.params["I"];
-        center.y = gline.params["J"];
+        center.x = posActual.x + gline.params["I"];
+        center.y = posActual.y + gline.params["J"];
 
         Posicion end;
         end.x = gline.params["X"];
@@ -51,7 +54,8 @@ void executeLine(GCodeLine &gline)
 
         bool clockwise = gline.cmd == "G2";
 
-        Serial.printf("%s: Movimiento de arco a X: %.2f, Y: %.2f, I: %.2f, J: %.2f\n", gline.cmd, end.x, end.y, center.x, center.y);
+        Serial.printf("%s: Movimiento de arco a X: %.2f, Y: %.2f, Centro abs: %.2f, %.2f\n",
+                      gline.cmd.c_str(), end.x, end.y, center.x, center.y);
         movimientoArco(center, clockwise, &end);
     }
     else if (gline.cmd == "G28")

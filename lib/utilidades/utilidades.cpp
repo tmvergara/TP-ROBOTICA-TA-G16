@@ -158,7 +158,7 @@ void actualizarMovimientoArco(float delta)
 
     float anguloActualRad = anguloPuntos(arco.centro, posicionActual);
     float incrementoAngulo = arco.direccion * deltaAngularRad;
-    arco.deltaAngulo += incrementoAngulo;
+    arco.deltaAngulo += abs(incrementoAngulo);
     anguloActualRad += incrementoAngulo;
 
     if (arco.deltaAngulo >= 2 * PI)
@@ -232,7 +232,8 @@ void movimientoArco(Posicion centro, bool sentidoHorario, Posicion *fin)
     static Arco arco;
     arco.centro = centro;
     arco.radio = distanciaPuntos(centro, posicionActual);
-    arco.direccion = sentidoHorario ? 1 : -1;
+    // En sistema cartesiano: horario es negativo, antihorario positivo
+    arco.direccion = sentidoHorario ? -1 : 1;
     arco.deltaAngulo = 0;
 
     objetivoArco = &arco;
