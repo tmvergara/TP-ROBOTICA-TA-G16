@@ -30,6 +30,6 @@ const float VELOCIDAD_DEFECTO = 100; // Velocidad del lápiz mm/s
 const float DELTA_MAX = 0.1;
 
 // Pines de los servos
-static const int pinServoElevador = GPIO_NUM_0;
+static const int pinServoElevador = GPIO_NUM_12;
 static const int pinServoIzquierdo = GPIO_NUM_2;
-static const int pinServoDerecho = GPIO_NUM_1;
+static const int pinServoDerecho = GPIO_NUM_14;

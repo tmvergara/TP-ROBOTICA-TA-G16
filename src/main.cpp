@@ -59,16 +59,16 @@ void setup()
       solicitud->send(405, "text/plain", "Método no permitido");
     } });
 
-  servidor.on("/gcode", HTTP_POST, [](AsyncWebServerRequest *solicitud)
+  servidor.on("/gcode", HTTP_POST, [](AsyncWebServerRequest *solicitud) {}, NULL, [](AsyncWebServerRequest *solicitud, uint8_t *data, size_t len, size_t index, size_t total)
               {
-              if(solicitud->hasParam("gcode", true))
-              {
-                String gcode = solicitud->getParam("gcode", true)->value();
-                setGCode(gcode);
-                solicitud->send(200, "text/plain", "OK");
-              }
-
-              solicitud->send(400, "text/plain", "Falta parámetro gcode"); });
+    String gcode = "";
+    for(size_t i = 0; i < len; i++) {
+      gcode += (char)data[i];
+    }
+    Serial.println("G-code recibido:");
+    Serial.println(gcode);
+    setGCode(gcode);
+    solicitud->send(200, "text/plain", "OK"); });
 
   servidor.on("/status", HTTP_GET, [](AsyncWebServerRequest *solicitud)
               {
@@ -86,7 +86,7 @@ void setup()
 
       solicitud->send(respuesta); });
 
-  servidor.on("/status", HTTP_GET, [](AsyncWebServerRequest *solicitud)
+  servidor.on("/config", HTTP_GET, [](AsyncWebServerRequest *solicitud)
               {
       AsyncResponseStream *respuesta = solicitud->beginResponseStream("application/json");
 
