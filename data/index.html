@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TP Robotica</title>
+  <title>TP Robótica</title>
   <style>
     :root {
       --gap: 24px;
@@ -35,7 +34,7 @@
 
     header h1 {
       margin: 0;
-      font-size: 18px;
+      font-size: clamp(14px, 4vw, 18px);
     }
 
     #status {
@@ -56,7 +55,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(140px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: var(--gap);
     }
 
@@ -75,29 +74,11 @@
       transform: scale(0.98);
     }
 
-    .red {
-      background: #e53935;
-    }
-
-    .blue {
-      background: #1e88e5;
-    }
-
-    .yellow {
-      background: #f2a900;
-    }
-
-    .green {
-      background: #2e7d32;
-    }
-
-    .pink {
-      background: #e91e63;
-    }
-
-    .purple {
-      background: #8e24aa;
-    }
+    .red { background: #e53935; }
+    .blue { background: #1e88e5; }
+    .yellow { background: #f2a900; }
+    .green { background: #2e7d32; }
+    .purple { background: #8e24aa; }
 
     svg {
       width: 80px;
@@ -120,6 +101,7 @@
       border-radius: 12px;
       font-weight: 600;
       cursor: pointer;
+      flex: 1;
     }
 
     .btn:hover {
@@ -158,22 +140,69 @@
       background: #0f1320;
       color: #e9f1ff;
       padding: 10px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
-        "Liberation Mono", monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
     }
 
     .hint {
       font-size: 12px;
       color: #9fb0c6;
     }
+
+    /* === Sección de integrantes ajustada === */
+    .integrantes {
+      margin-top: 40px;
+      margin-bottom: 40px;
+      padding: 14px 16px;
+      text-align: center;
+      border-top: 1px solid #1b2230;
+      color: #b5c7e1;
+      font-size: 14px;
+      background: rgba(20, 25, 35, 0.25);
+      border-radius: 10px;
+      width: 100%;
+    }
+
+    .integrantes h2 {
+      font-size: 15px;
+      margin-bottom: 6px;
+      color: #a8c4f5;
+      letter-spacing: 0.4px;
+    }
+
+    .integrantes p {
+      margin: 3px 0;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        height: 140px;
+      }
+
+      svg {
+        width: 60px;
+        height: 60px;
+      }
+
+      #status {
+        float: none;
+        display: block;
+        margin-top: 8px;
+        text-align: right;
+      }
+
+      .integrantes {
+        font-size: 13px;
+        padding: 12px;
+        margin-bottom: 30px;
+      }
+    }
   </style>
 </head>
 
 <body>
   <header>
-    <h1>
-      Plotter 2D – Tp Robotica - Tecnologias para la Automatizacion - G16
-    </h1>
+    <h1>Plotter 2D – TP Robótica - Tecnologías para la Automatización - G16</h1>
     <span id="status" aria-live="polite">Listo</span>
   </header>
 
@@ -184,26 +213,25 @@
           <polygon points="50,10 90,90 10,90" />
         </svg>
       </button>
+
       <button class="card blue" data-shape="diamond" aria-label="Rombo">
         <svg viewBox="0 0 100 100">
           <polygon points="50,10 90,50 50,90 10,50" />
         </svg>
       </button>
+
       <button class="card yellow" data-shape="circle" aria-label="Círculo">
         <svg viewBox="0 0 100 100">
           <circle cx="50" cy="50" r="30" />
         </svg>
       </button>
+
       <button class="card green" data-shape="square" aria-label="Cuadrado">
         <svg viewBox="0 0 100 100">
           <rect x="25" y="25" width="50" height="50" />
         </svg>
       </button>
-      <button class="card pink" data-shape="heart" aria-label="Corazón">
-        <svg viewBox="0 0 100 100">
-          <path d="M50 90 L15 55 A20 20 0 0 1 50 25 A20 20 0 0 1 85 55 Z" />
-        </svg>
-      </button>
+
       <button class="card purple" data-shape="star" aria-label="Estrella">
         <svg viewBox="0 0 100 100">
           <polygon points="50,10 61,40 94,40 67,60 76,90 50,72 24,90 33,60 6,40 39,40" />
@@ -215,7 +243,6 @@
       <button id="btnDebugToggle" class="btn debug">🐞 debug</button>
     </div>
 
-    <!-- Panel debug oculto por defecto -->
     <section id="dbgPanel" class="debug-panel">
       <div class="debug-row">
         <button id="btnAssembly" class="btn">▶ asmbly</button>
@@ -223,8 +250,7 @@
       </div>
 
       <div>
-        <label for="gcodeBox" class="hint">G-code manual (se enviará como <code>text/plain</code> a
-          <code>/gcode</code>)</label>
+        <label for="gcodeBox" class="hint">G-code manual (se enviará como <code>text/plain</code> a <code>/gcode</code>)</label>
         <textarea id="gcodeBox" placeholder="Ejemplo:
 G28
 M203 X100
@@ -239,6 +265,15 @@ M5"></textarea>
           <span class="hint">Editá el endpoint en el JS si querés otro.</span>
         </div>
       </div>
+    </section>
+
+    <section class="integrantes">
+      <h2>Integrantes del Grupo 16</h2>
+      <p>Ariza Alena</p>
+      <p>Bordino Blanche Juan Cruz</p>
+      <p>Olmos Tomás</p>
+      <p>Vergara Tomás</p>
+      <p>Yorlano Pedro</p>
     </section>
   </main>
 
@@ -275,13 +310,7 @@ M5"></textarea>
         return await r.text().catch(() => "");
       }
 
-      // =======================
-      // G-code seguro (bounds)
-      // Centro común (0,75)
-      // =======================
-
       const gcodeMap = {
-        // Triángulo: (-30,45) -> (30,45) -> (0,110)
         triangle: `M5
         G28
         M203 X100
@@ -292,7 +321,6 @@ M5"></textarea>
         G1 X-30 Y45
         M5`,
 
-        // Rombo: top (0,110), right (35,75), bottom (0,40), left (-35,75)
         diamond: `M5
         G28
         M203 X100
@@ -304,8 +332,6 @@ M5"></textarea>
         G1 X0 Y110
         M5`,
 
-        // Círculo: centro (0,75), radio 25
-        // Desde (25,75): offset relativo I=-25, J=0 para llegar a centro (0,75)
         circle: `G28
         M203 X100
         G1 X25 Y75
@@ -313,7 +339,6 @@ M5"></textarea>
         G3 I-25 J0  
         M5`,
 
-        // Cuadrado: lado 60 => x=-30..30, y=45..105
         square: `M5
         G28
         M203 X100
@@ -325,21 +350,6 @@ M5"></textarea>
         G1 X-30 Y45
         M5`,
 
-        // Corazón: dos arcos + líneas
-        // Desde (0,80) a (-20,80): centro (-10,80) => I=-10, J=0
-        // Desde (20,80) a (0,80): centro (10,80) => I=-10, J=0
-        heart: `M5
-        G28
-        M203 X100
-        G1 X0 Y80
-        M3
-        G3 X-20 Y80 I-10 J0
-        G1 X0 Y55
-        G1 X20 Y80
-        G2 X0 Y80 I-10 J0
-        M5`,
-
-        // Estrella 5 puntas (solo líneas)
         star: `M5
         G28
         M203 X100
@@ -358,8 +368,6 @@ M5"></textarea>
         M5`,
       };
 
-
-      // Click en figuras -> POST /gcode
       document.querySelectorAll(".card").forEach((btn) => {
         btn.addEventListener("click", async () => {
           const shape = btn.dataset.shape;
@@ -374,7 +382,6 @@ M5"></textarea>
         });
       });
 
-      // Mostrar/ocultar panel debug
       btnToggle.addEventListener("click", () => {
         dbgPanel.style.display =
           dbgPanel.style.display === "none" || !dbgPanel.style.display
@@ -382,11 +389,10 @@ M5"></textarea>
             : "none";
       });
 
-      // Botón "assembly" -> POST /assembly (placeholder)
       btnAsm.addEventListener("click", async () => {
         setStatus("info", "Ejecutando assembly…");
         try {
-          await postPlain("/assembly", "RUN"); // Cambiá endpoint/cuerpo si hace falta
+          await postPlain("/assembly", "RUN");
           setStatus("ok", "assembly enviado");
         } catch (e) {
           console.error(e);
@@ -394,7 +400,6 @@ M5"></textarea>
         }
       });
 
-      // Enviar G-code manual
       btnSend.addEventListener("click", async () => {
         const body = gbox.value.trim();
         if (!body) {
@@ -413,5 +418,4 @@ M5"></textarea>
     })();
   </script>
 </body>
-
 </html>
